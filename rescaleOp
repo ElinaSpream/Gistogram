@@ -3,12 +3,14 @@ import java.net.*;
 import java.awt.*;
 import java.io.*;
 import javax.imageio.*;
-public class DemoonRescaleop {
+class DemoonRescaleop{
+    static String path = "img.jpg";
+    static int[] pixel = new int[4];
     public static void main(String[] args) throws Exception    {
+        File file = new File(path);
+        BufferedImage img = ImageIO.read(file);
+        WritableRaster raster = img.getRaster();
         // выбираем изображение из URL
-        URL url = new URL("https:// media.geeksforgeeks.org" + "/wp-content/uploads/geeksforgeeks-9.png");
-        // Чтение изображения с URL
-        Image image = ImageIO.read(url);
         // Настройка масштабирования и
         // параметры смещения для обработки
         float[] factors = new float[] {
@@ -24,7 +26,7 @@ public class DemoonRescaleop {
         // используя метод filter (), он принимает
         // Исходный и целевой объекты буферизированного ридера
         // здесь наш целевой объект нулевой
-        BufferedImage bi = rop.filter((BufferedImage)image, null);
+        BufferedImage bi = rop.filter((BufferedImage)img, null);
         ImageIO.write(bi, "png", new File("processed.png"));
     }
 }
