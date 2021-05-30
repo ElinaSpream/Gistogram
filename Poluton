@@ -1,0 +1,34 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.io.File;
+
+public class Main {
+
+    static String path = "test1.jpg";
+    static int[] pixel = new int[4];
+
+    public static void main(String[] args) throws IOException{
+        File file = new File(path);
+        BufferedImage src_img = ImageIO.read(file);
+        WritableRaster raster = src_img.getRaster();
+        final int height = raster.getHeight();
+        final int width = raster.getWidth();
+        for (int y = 0; y < height; y++){
+            for (int x = 0; x < width; x++){
+                Color c = new Color(src_img.getRGB(x, y));
+                int red = (int) (c.getRed() * 0.299);
+                int green = (int) (c.getGreen() * 0.587);
+                int blue = (int) (c.getBlue() * 0.114);
+                Color newColor = new Color(red + green + blue,
+                                            red + green + blue,
+                                            red + green + blue);
+                src_img.setRGB(x, y, newColor.getRGB());
+            }
+        }
+        ImageIO.write(src_img,"jpg",new File("out1.jpg"));
+    }
+}
