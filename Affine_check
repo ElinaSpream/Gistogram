@@ -1,0 +1,63 @@
+package com.company;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.RescaleOp;
+import java.io.File;
+
+class Rescale extends Frame {
+    private BufferedImage bi;
+    public Rescale(String s){
+        super (s);
+        Image img = getToolkit().getImage("img.jpg");
+        try{
+            MediaTracker mt = new MediaTracker(this);
+            mt.addImage(img, 0);
+            mt.waitForID(0); }
+        catch(Exception e){}
+        bi = new BufferedImage(img.getWidth(this), img.getHeight(this), BufferedImage.TYPE_INT_RGB);
+        Graphics2D big = bi.createGraphics();
+        big.drawImage(img, 0, 0, this);
+    }
+    public void paint(Graphics g){
+        Graphics2D g2 = (Graphics2D)g;
+        int w = getSize().width;
+        int bw = bi.getWidth(this);
+        int bh = bi.getHeight(this);
+        BufferedImage bimg = new BufferedImage(bw, bh, BufferedImage.TYPE_INT_RGB);
+//– Начало определения преобразования – -–
+        AffineTransform af = AffineTransform.getRotateInstance(45, bimg.getWidth() / 2, bimg.getHeight() / 2);
+        BufferedImageOp bI = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+        bI.filter(bi, bimg);
+//– Конец определения преобразования –
+
+        try {
+            ImageIO.write(bimg, "png", new File("out.png"));
+        }catch(Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        Image img1 = getToolkit().getImage("out.png");
+        BufferedImage img_ = new BufferedImage(bw, bh, BufferedImage.TYPE_INT_RGB);
+        
+        g2.drawImage(bi, null, 10, 30);
+        g2.drawImage(bimg, null, w/3+3, 30);
+        g2.drawImage(img_, null, w/2+200, 30);
+    }
+    public static void main(String[] args){
+        Frame f = new Rescale(" Аффинное преобразование");
+        f.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        f.setSize(1500, 500);
+        f.setVisible(true);
+    }
+}
