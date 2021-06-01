@@ -1,0 +1,87 @@
+package com.company;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.WritableRaster;
+import java.io.*;
+import javax.imageio.*;
+import javax.swing.*;
+public class Main {
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                ImageFrame frame = new ImageFrame();
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(1500, 500);
+                frame.setVisible(true);
+            }
+        });
+    }
+
+}
+class ImageFrame extends JFrame
+{
+    public ImageFrame()
+    {
+        setTitle("Аффинное преобразование");
+        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+        // Добавление компонента к фрейму.
+        ImageComponent component = new ImageComponent();
+        add(component);
+    }
+    public static final int DEFAULT_WIDTH = 300;
+    public static final int DEFAULT_HEIGHT = 200;
+}
+class ImageComponent extends JComponent
+{
+    public ImageComponent()
+    {
+        // Получаем изображения.
+        try
+        {
+            back = ImageIO.read(new File("b.jpg"));
+
+            image = ImageIO.read(new File("src\\img.jpg"));
+            BufferedImage iF = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
+            AffineTransform af = AffineTransform.getRotateInstance(45, image.getWidth(this) / 2, image.getHeight(this) / 2);
+            BufferedImageOp bI = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+            bI.filter((BufferedImage) image, iF);
+
+            ImageIO.write(iF, "png", new File("src\\out1.png"));
+            image1 = ImageIO.read(new File("src\\out1.png"));
+
+            BufferedImage iF1 = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_3BYTE_BGR);
+            BufferedImageOp bI1 = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+            bI1.filter((BufferedImage) image, iF1);
+
+            ImageIO.write(iF1, "jpg", new File("src\\out2.jpg"));
+            image2 = ImageIO.read(new File("src\\out2.jpg"));
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void paintComponent(Graphics g) {
+        if (image == null) return;
+
+        g.drawImage(back,0,0,null);
+
+        g.drawImage(image, 0, 20, null);
+        g.drawImage(image1, 500, 20, null);
+        g.drawImage(image2, 1000, 20, null);
+
+
+    }
+    private Image back;
+    private Image image;
+    private Image image1;
+    private Image image2;
+}
