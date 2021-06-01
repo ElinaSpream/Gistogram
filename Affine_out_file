@@ -1,0 +1,66 @@
+package com.company;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        JFrame f = new JFrame("Аффинное преобразование");
+        f.setSize(1500, 500);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.setVisible(true);
+
+        File file = new File("img.jpg");
+        BufferedImage img = ImageIO.read(file);
+        WritableRaster raster = img.getRaster();
+
+        BufferedImage iF = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        AffineTransform af = AffineTransform.getRotateInstance(45, img.getWidth() / 2, img.getHeight() / 2);
+        BufferedImageOp bI = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+        bI.filter(img, iF);
+
+        ImageIO.write(iF, "png", new File("out.png"));
+        ImageIO.write(iF, "jpg", new File("out.jpg"));
+
+    }
+}
+//class Aaa extends JComponent implements KeyListener, ActionListener {
+//        Image img_ = new ImageIcon("img.jpg").getImage();
+//        public void paint(Graphics g) {
+//            Graphics2D gr = (Graphics2D)g;
+//            gr.drawImage(img_,0,0,400,400,f);
+//        }
+//
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//
+//    }
+//
+//    @Override
+//    public void keyTyped(KeyEvent e) {
+//
+//    }
+//
+//    @Override
+//    public void keyPressed(KeyEvent e) {
+//
+//    }
+//
+//    @Override
+//    public void keyReleased(KeyEvent e) {
+//
+//    }
